@@ -13,11 +13,14 @@ document.getElementById('submitBtn').addEventListener('click', function() {
         return;
     }
 
+
+    // Valida preenchimento
     if (!system || !network_user || !cpf || !birthdate) {
         alert('Por favor, preencha todos os campos.');
         return;
     }
 
+    // Prepara dados
     const data = {
         system: system,
         network_user: network_user,
@@ -25,6 +28,7 @@ document.getElementById('submitBtn').addEventListener('click', function() {
         birthdate: birthdate
     };
 
+    // Mensagem de carregamento
     const popup = document.getElementById('popup');
     const popupMessage = document.getElementById('popupMessage');
     const loader = document.getElementById('loader');
@@ -32,6 +36,7 @@ document.getElementById('submitBtn').addEventListener('click', function() {
     popupMessage.innerHTML = "Aguardando resposta...";
     loader.style.display = 'block';
 
+    // Chama a API
     fetch('http://localhost:5000/trocarSenha', {
         method: 'POST',
         headers: {
@@ -43,7 +48,7 @@ document.getElementById('submitBtn').addEventListener('click', function() {
     .then(data => {
         loader.style.display = 'none';
         if (Array.isArray(data.messages) && data.messages.length > 0) {
-            // Junta todas as mensagens em uma única string, separando-as por quebras de linha
+            // Junta todas as mensagens em uma única string, separando-as por quebras de linha e retorna na tela
             const combinedMessages = data.messages.map(msg => `${msg.message}`).join('<br>');
             popupMessage.innerHTML = combinedMessages;
         } else {
@@ -53,7 +58,7 @@ document.getElementById('submitBtn').addEventListener('click', function() {
     .catch((error) => {
         console.error('Error:', error);
         loader.style.display = 'none';
-        popupMessage.innerHTML = 'Erro ao validar dados do usuário';
+        popupMessage.innerHTML = 'Erro ao validar dados do usuário';    // msg de erro caso não consiga validar
     })
     .finally(() => {
 
@@ -61,6 +66,7 @@ document.getElementById('submitBtn').addEventListener('click', function() {
     });
 });
 
+// limpar os campos para que o usuário não fique spamando solicitações após a conclusão 
 function clearFields() {
     document.getElementById('system').value = '';
     document.getElementById('username').value = '';
@@ -68,6 +74,7 @@ function clearFields() {
     document.getElementById('birthdate').value = '';
 }
 
+// Close do popup
 document.getElementById('closePopupBtn').addEventListener('click', function() {
     document.getElementById('popup').style.display = 'none';
 });
